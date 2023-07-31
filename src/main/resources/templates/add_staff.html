@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/styles/style.css}" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+            rel="stylesheet">
+    <!-- Google Web Fonts -->
+    <title>Add staff</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/Logo1.png}">
+</head>
+
+<body>
+<div class="wraper">
+    <div th:replace="/header :: header"></div>
+    <div class="content_body">
+        <div class="menu" id="sideBar" style="transition-duration: 400ms;">
+            <div th:replace="/menu :: menu"></div>
+        </div>
+        <div class="bg_body" id="bgbody">
+            <div class="add_staff_body">
+                <div class="add_staff_out">
+                    <div class="staff_body_inner">
+
+                        <form th:action="@{/admin/addStaff}" th:object="${nguoiDung}" method="POST" enctype="multipart/form-data">
+                            <div class="tittle_staff" th:text="${title}" >
+                            </div>
+                            <div class="date_staff">
+                                <div class="form-group">
+
+                                    <img src="'../static/adminImages/' + ${nguoiDung.urlImg}"  th:src="'/adminImages/'+${nguoiDung.urlImg}" id="imgPreview" height="150px" width="150px"   alt="avatar">
+                                    <input type="file" id="imgupload" class="custom-file-input" name="adminImage" accept="image/jpeg, image/png"  />
+                                    <span class="material-symbols-outlined" id="OpenImgUpload" onclick="myFunction2()">
+                                            add_a_photo
+                                            </span>
+                                    <input type="hidden" name="urlImg" th:field="*{urlImg}">
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="id" th:field="*{id}">
+                            <div class="input_staff ">
+                                <input type="text" class="input_fied" placeholder="Họ tên" th:field="*{name}" name="name">
+                            </div>
+                            <div class="input_staff custom1">
+                                <!-- ngaysinh-gioitinh -->
+                                <div class="date_staff">
+                                    <input type="text" id="datepicker" placeholder="Ngày sinh" th:field="*{ngaySinh}" onclick="myFunction1()" name="ngaySinh">
+                                </div>
+                                <div class="sex_staff">
+                                    <select th:value="*{gioiTinh}" name="gioiTinh" tabindex="-1" class="select_staff" aria-hidden="true">
+                                        <option disabled="disabled" selected >Giới tính</option>
+                                        <option th:selected="${nguoiDung.gioiTinh}?'true':'false'" value="1">Nam</option>
+                                        <option th:selected="${nguoiDung.gioiTinh}?'false':'true'" value="0">Nữ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="input_staff">
+                                <input name="email" type="email" th:field="*{email}" class="input_fied" placeholder="Email">
+                            </div>
+                            <div class="input_staff">
+                                <input  name="matKhau" hidden th:field="*{matKhau}" class="input_fied" placeholder="Mật khẩu">
+                            </div>
+                            <div class="input_staff">
+                                <select name="role" tabindex="-1" class="select_staff" aria-hidden="true">
+                                    <option disabled="disabled" >Vị trí</option>
+                                    <option th:selected="${role}=='ROLE_ADMIN'?'true':'false'" value="ROLE_ADMIN">ADMIN</option>
+                                    <option th:selected="${role}=='ROLE_USER'?'true':'false'" value="ROLE_USER">USER</option>
+                                    <option>STAFF</option>
+                                </select>
+                            </div>
+                            <div class="input_staff">
+                                <input name="diaChi" th:field="*{diaChi}" type="text" class="input_fied" placeholder="Địa chỉ">
+                            </div>
+                            <div class="input_staff">
+                                <input name="sdt" type="text" th:field="*{sdt}" class="input_fied" placeholder="Số điện thoại">
+                            </div>
+                            <div class="input_staff marin10px staff_flex cursor">
+                                <button type="submit" >Xác nhận</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+        function myFunction() {
+            console.log(document.getElementById("sideBar").style.width);
+            if (document.getElementById("sideBar").style.width === "0px") {
+                document.getElementById("sideBar").style.width = "15%";
+                document.getElementById("logo").style.width = "15%";
+                document.getElementById("bgbody").style.width = "85%";
+                document.getElementById("navbar_main").style.width = "85%";
+
+            }
+            else {
+                document.getElementById("sideBar").style.width = 0;
+                document.getElementById("logo").style.width = 0;
+                document.getElementById("bgbody").style.width = "100%";
+                document.getElementById("navbar_main").style.width = "100%";
+            }
+        }
+        function myFunction1(){
+            document.getElementById('datepicker').type = 'date';
+        }
+        function myFunction2(){
+            document.getElementById("imgupload").click();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+package ptit.woo.model.hoadon;
+
+import lombok.Data;
+import ptit.woo.dto.hoadondto.HoaDonDTO;
+import ptit.woo.dto.hoadondto.SanPhamHoaDonDTO;
+import ptit.woo.model.KhachHang;
+import ptit.woo.model.maGiamGia.MaGiamGia;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.sql.Date;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+@Data
+@Entity
+@Table(name = "hoadon")
+public class HoaDon implements Serializable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Column(name = "nguoinhan")
+    private String nguoiNhan;
+    @Column(name = "sdt")
+    private String sdt;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "diachi")
+    private String diaChi;
+    @Column(name = "shipping")
+    private String shipping;
+    @Column(name = "ghichu",length = 500)
+    private String ghiChu;
+    @Column(name = "xuathd")
+    private boolean xuatHD;
+    @Column(name ="ngayTao")
+    private Date ngayTao;
+    @Column(name ="tinhtrang")
+    private String tinhTrang;
+    @ManyToOne
+    @JoinColumn(name = "khachhang_id")
+    private KhachHang khachHang;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "magiamgia_id")
+    private MaGiamGia maGiamGia;
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "hoadon_id")
+    private List<SanPhamHoaDon> sanPhamHoaDons;
+
+    public HoaDonDTO convertToDTO(){
+        HoaDonDTO h = new HoaDonDTO();
+        h.setId(this.id);
+        h.setNguoiNhan(this.nguoiNhan);
+        h.setSdt(this.sdt);
+        h.setEmail(this.email);
+        h.setDiaChi(this.diaChi);
+        h.setShipping(this.shipping);
+        h.setGhiChu(this.ghiChu);
+        h.setXuatHD(this.xuatHD);
+        h.setNgayTao(this.ngayTao);
+        h.setTinhTrang(this.tinhTrang);
+
+        List<SanPhamHoaDonDTO> list = new ArrayList<>();
+        double tongTien = 0.0;
+        for(SanPhamHoaDon e:this.sanPhamHoaDons){
+            list.add(e.convertToDTO());
+            tongTien+=e.getTong();
+        }
+        Locale locale = new Locale("vi","VN");
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+        h.setTong(numberFormat.format(tongTien));
+        if (this.maGiamGia!=null){
+            h.setMaGiamGiaDto(this.maGiamGia.convertToDtoView());
+            double tientru = this.maGiamGia.getGiamToiDa();
+
+            tientru = Math.min(tientru,tongTien*(this.maGiamGia.getGiaTri()/100));
+            double tongcong = tongTien - tientru;
+            h.setTongtien(numberFormat.format(tongcong));
+        }
+        else {
+            h.setTongtien(numberFormat.format(tongTien));
+        }
+        h.setSanPhamHoaDons(list);
+        return h;
+    }
+}
